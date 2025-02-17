@@ -91,6 +91,11 @@ class TaggerConfig:
         default=False,
         help="If true, only print the configuration and exit without running the taggers.",
     )
+    language: str = field(
+        default="en",
+        choices=["en", "es"],
+        help="Language code for processing documents. Supported languages: 'en' (English), 'es' (Spanish)."
+    )
 
 
 class TaggerCli(BaseCli):
@@ -140,6 +145,7 @@ class TaggerCli(BaseCli):
                 profile_output=parsed_config.profile.output,
                 profile_steps=parsed_config.profile.steps,
                 profile_sort_key=parsed_config.profile.sort_key,
+                language = parsed_config.language,
             )
 
 

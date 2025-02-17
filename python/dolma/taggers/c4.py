@@ -8,11 +8,18 @@ from ..core.registry import TaggerRegistry
 from ..core.taggers import BaseTagger
 
 MIN_WORDS_PER_LINE = 3
-NAUGHTY_LINES = (Path(__file__).parent / "../data/naughty_words_en.txt").absolute().open().read().splitlines()
-NAUGHTY_WORDS: Set[str] = set(w for w in NAUGHTY_LINES if " " not in w)
-NAUGHTY_PHRASES: Set[str] = set(w for w in NAUGHTY_LINES if " " in w)
 EOL_PUNCTUATION = {".", "?", "!", '"'}
 
+def load_naughty_words(language: str) -> Set[str]:
+    naughty_words_file = Path(__file__).parent / f"../data/naughty_words_{language}.txt"
+    if not naughty_words_file.exists():
+        raise ValueError(f"Naughty words file for language '{language}' not found: {naughty_words_file}")
+    
+    naughty_lines = naughty_words_file.absolute().open().read().splitlines()
+    words = set(w for w in naughty_lines if " " not in w)
+    phrases = set(w for w in naughty_lines if " " in w)
+
+    return words, phrases
 
 @dataclass
 class C4Attributes:
@@ -41,7 +48,7 @@ class C4Attributes:
         return spans
 
 
-def get_attributes(text: str) -> C4Attributes:
+def get_attributes(text: str, naughty_words: Set[str], naughty_phrases: Set[str]) -> C4Attributes:
     attrs = C4Attributes([], [])
     attrs.character_count = len(text)
     try:
@@ -61,7 +68,7 @@ def get_attributes(text: str) -> C4Attributes:
             words = line.split()
             if len(words) < MIN_WORDS_PER_LINE:
                 attrs.lines_with_too_few_words.append(Span(offset, end_offset, type="lines_with_too_few_words"))
-            if any(word in NAUGHTY_WORDS for word in words) or any(phrase in line for phrase in NAUGHTY_PHRASES):
+            if any(word in naughty_words for word in words) or any(phrase in line for phrase in naughty_phrases):
                 attrs.has_naughty_word = True
             if any(word == "javascript" for word in words):
                 attrs.has_javascript = True
@@ -78,14 +85,22 @@ def get_attributes(text: str) -> C4Attributes:
 
 @TaggerRegistry.add("c4_v1")
 class C4Tagger(BaseTagger):
+    def __init__(self, language: str = "en"):
+        super().__init__()
+        self.naughty_words, self.naughty_phrases = load_naughty_words(language)
+
     def predict(self, doc: Document) -> DocResult:
-        attrs = get_attributes(doc.text)
+        attrs = get_attributes(doc.text, self.naughty_words, self.naughty_phrases)
         result = DocResult(doc=doc, spans=attrs.as_spans())
         return result
 
 
 @TaggerRegistry.add("c4_v2")
 class FasterC4Tagger(BaseTagger):
+    def __init__(self, language: str = "en"):
+        super().__init__()
+        self.naughty_words, self.naughty_phrases = load_naughty_words(language)
+
     def predict(self, doc: Document) -> DocResult:
         spans: List[Span] = []
         text = doc.text.lower()
@@ -99,8 +114,8 @@ class FasterC4Tagger(BaseTagger):
         if "javascript" in text:
             spans.append(Span(0, len(doc.text), type="has_javascript"))
 
-        if any(word in NAUGHTY_WORDS for word in text.split()) or any(
-            phrase in text for phrase in NAUGHTY_PHRASES
+        if any(word in self.naughty_words for word in text.split()) or any(
+            phrase in text for phrase in self.naughty_phrases
         ):
             spans.append(Span(0, len(doc.text), type="has_naughty_word"))
 
