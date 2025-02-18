@@ -93,8 +93,8 @@ class TaggerConfig:
     )
     language: str = field(
         default="en",
-        choices=["en", "es"],
-        help="Language code for processing documents. Supported languages: 'en' (English), 'es' (Spanish)."
+        choices=["en", "spa"],
+        help="Language code for processing documents. Supported languages: 'en' (English), 'spa' (Spanish)."
     )
 
 
