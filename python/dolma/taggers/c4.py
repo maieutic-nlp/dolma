@@ -140,3 +140,35 @@ class FasterC4Tagger(BaseTagger):
 
         spans.append(Span(0, len(doc.text), type="line_count", score=count))
         return DocResult(doc=doc, spans=spans)
+
+@TaggerRegistry.add("mc4")
+class MC4Tagger(BaseTagger):
+    def __init__(self, language: str = "en"):
+        super().__init__()
+        self.naughty_words, self.naughty_phrases = load_naughty_words(language)
+    
+    def predict(self, doc: Document) -> DocResult:
+        spans: List[Span] = []
+        text = doc.text.lower()
+        lines = text.split("\n")
+        valid_line_count = sum(len(line) >= 200 for line in lines)
+
+        if valid_line_count < 3:
+            spans.append(Span(0, len(doc.text), type="filtered_by_line_length"))
+
+        # if "{" in text:
+        #     spans.append(Span(0, len(doc.text), type="has_curly_brace"))
+
+        # if "lorem ipsum" in text:
+        #     spans.append(Span(0, len(doc.text), type="has_lorem_ipsum"))
+
+        # if "javascript" in text:
+        #     spans.append(Span(0, len(doc.text), type="has_javascript"))
+
+        if any(word in self.naughty_words for word in text.split()) or any(
+            phrase in text for phrase in self.naughty_phrases
+        ):
+            spans.append(Span(0, len(doc.text), type="has_naughty_word"))
+
+        spans.append(Span(0, len(doc.text), type="line_count", score=valid_line_count))
+        return DocResult(doc=doc, spans=spans)
