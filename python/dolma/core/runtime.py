@@ -247,6 +247,7 @@ class TaggerProcessor(BaseParallelProcessor):
         **kwargs,
     ):
         language = kwargs.get("language", "en")
+        tokenizer = kwargs.get("tokenizer", "bert-base-multilingual-cased")
 
         """Lets count run the taggers! We will use the destination path to save each tagger output."""
         # import tagger modules
@@ -266,7 +267,11 @@ class TaggerProcessor(BaseParallelProcessor):
             tagger_cls = TaggerRegistry.get(t)
             tagger_params = inspect.signature(tagger_cls.__init__).parameters
 
-            if "language" in tagger_params:
+            if "tokenizer" in tagger_params and "language" in tagger_params:
+                taggers[make_variable_name(t)] = tagger_cls(tokenizer=tokenizer, language=language)
+            elif "tokenizer" in tagger_params:
+                taggers[make_variable_name(t)] = tagger_cls(tokenizer=tokenizer)
+            elif "language" in tagger_params:
                 taggers[make_variable_name(t)] = tagger_cls(language=language)
             else:
                 taggers[make_variable_name(t)] = tagger_cls()
@@ -406,6 +411,7 @@ def create_and_run_tagger(
     profile_sort_key: str = "tottime",
     profile_lines: int = 100,
     language: str = "en",
+    tokenizer: str = "bert-base-multilingual-cased",
 ):
     """This function creates a tagger and runs it on a list of documents.
 
@@ -483,7 +489,10 @@ def create_and_run_tagger(
             ignore_existing=ignore_existing,
             retries_on_error=retries_on_error,
             num_processes=num_processes,
-            process_single_kwargs={"language": language},
+            process_single_kwargs={
+                "language": language,
+                "tokenizer": tokenizer,
+            },
         )
 
         with ExitStack() as stack:

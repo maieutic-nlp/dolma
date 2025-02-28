@@ -10,6 +10,8 @@ from ..core.data_types import DocResult, Document, Span
 from ..core.registry import TaggerRegistry
 from ..core.taggers import BaseTagger
 
+from tokenizers import Tokenizer
+
 REQUIRED_ENGLISH_WORDS = {"the", "be", "to", "of", "and", "that", "have", "with"}
 SYMBOLS = {"#", "\u2026"}
 BULLET_POINTS = {"*", "-"}
@@ -231,3 +233,62 @@ class GopherTaggerV2(GopherTagger):
         attrs = get_attributes(doc.text, ignore_empty_lines=True)
         result = DocResult(doc=doc, spans=attrs.as_spans())
         return result
+
+@TaggerRegistry.add("gopher_multilingual")
+class MultilingualGopherTagger(BaseTagger):
+    def __init__(self, tokenizer: str = "bert-base-multilingual-cased"):
+        super().__init__()
+        self.tokenizer = Tokenizer.from_pretrained(tokenizer)
+
+    def predict(self, doc: Document) -> DocResult:
+        attrs = self.get_multilingual_attributes(doc.text, ignore_empty_lines=True)
+        return DocResult(doc=doc, spans=attrs.as_spans())
+
+    def get_multilingual_attributes(self, text: str, ignore_empty_lines: bool = False) -> GopherAttributes:
+        attrs = GopherAttributes([], [])
+        attrs.character_count = len(text)
+        if attrs.character_count == 0:
+            return attrs
+
+        tokens = self.tokenizer.encode(sequence=text, add_special_tokens=False).tokens
+        word_count = len(tokens)
+        character_count = sum(len(token) for token in tokens)
+
+        attrs.word_count = word_count
+        attrs.median_word_length = robust_median([len(token) for token in tokens])
+
+        attrs.fraction_of_words_with_alpha_character = sum(
+            1 for token in tokens if any(c.isalpha() for c in token)
+        ) / max(word_count, 1)
+
+        all_counts = all_ngram_counts(tokens)
+        count_most_common_ngrams = {2, 3, 4}
+        for n, ngram_counts in all_counts:
+            if not ngram_counts:
+                continue
+            if n in count_most_common_ngrams:
+                most_common_ngram, count = ngram_counts.most_common(1)[0]
+                value = count * sum(len(w) for w in most_common_ngram) / max(character_count, 1)
+                attrs.fraction_of_characters_in_most_common_ngram.append((n, value))
+            else:
+                ng_char_count = sum(count * sum(len(w) for w in ng) for ng, count in ngram_counts.items())
+                value = sum(
+                    count * sum(len(w) for w in ng) for ng, count in ngram_counts.items() if count > 1
+                ) / max(ng_char_count, 1)
+                attrs.fraction_of_characters_in_duplicate_ngrams.append((n, value))
+
+        if ignore_empty_lines:
+            lines = re.split(r"\n+", text)
+        else:
+            lines = text.split("\n")
+        
+        line_count = len(lines)
+        line_counts = Counter(lines)
+        attrs.fraction_of_duplicate_lines = sum(count for line, count in line_counts.items() if count > 1) / max(
+            line_count, 1
+        )
+        attrs.fraction_of_characters_in_duplicate_lines = sum(
+            len(line) * count for line, count in line_counts.items() if count > 1
+        ) / max(character_count, 1)
+
+        return attrs
