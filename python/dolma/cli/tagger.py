@@ -96,6 +96,10 @@ class TaggerConfig:
         choices=["en", "spa"],
         help="Language code for processing documents. Supported languages: 'en' (English), 'spa' (Spanish)."
     )
+    tokenizer: Optional[str] = field(
+        default="xlm-roberta-base",
+        help="Name or path of the tokenizer to use. Must be a HuggingFace-compatible tokenizer."
+    )
 
 
 class TaggerCli(BaseCli):
@@ -146,6 +150,7 @@ class TaggerCli(BaseCli):
                 profile_steps=parsed_config.profile.steps,
                 profile_sort_key=parsed_config.profile.sort_key,
                 language = parsed_config.language,
+                tokenizer=parsed_config.tokenizer,
             )
 
 
