@@ -236,7 +236,7 @@ class GopherTaggerV2(GopherTagger):
 
 @TaggerRegistry.add("gopher_multilingual")
 class MultilingualGopherTagger(BaseTagger):
-    def __init__(self, tokenizer: str = "bert-base-multilingual-cased"):
+    def __init__(self, tokenizer: str = "xlm-roberta-base"):
         super().__init__()
         self.tokenizer = Tokenizer.from_pretrained(tokenizer)
 

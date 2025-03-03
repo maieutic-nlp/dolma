@@ -247,7 +247,7 @@ class TaggerProcessor(BaseParallelProcessor):
         **kwargs,
     ):
         language = kwargs.get("language", "en")
-        tokenizer = kwargs.get("tokenizer", "bert-base-multilingual-cased")
+        tokenizer = kwargs.get("tokenizer", "xlm-roberta-base")
 
         """Lets count run the taggers! We will use the destination path to save each tagger output."""
         # import tagger modules
@@ -411,7 +411,7 @@ def create_and_run_tagger(
     profile_sort_key: str = "tottime",
     profile_lines: int = 100,
     language: str = "en",
-    tokenizer: str = "bert-base-multilingual-cased",
+    tokenizer: str = "xlm-roberta-base",
 ):
     """This function creates a tagger and runs it on a list of documents.
 

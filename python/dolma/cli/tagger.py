@@ -97,7 +97,7 @@ class TaggerConfig:
         help="Language code for processing documents. Supported languages: 'en' (English), 'spa' (Spanish)."
     )
     tokenizer: Optional[str] = field(
-        default="bert-base-multilingual-cased",
+        default="xlm-roberta-base",
         help="Name or path of the tokenizer to use. Must be a HuggingFace-compatible tokenizer."
     )
 
