@@ -32,6 +32,8 @@ from .paths import delete_dir, join_path, make_relative, mkdir_p, split_glob, sp
 from .registry import TaggerRegistry
 from .utils import import_modules, make_variable_name
 
+import inspect
+
 # this placeholder gets used when a user has provided no experiment name, and we want to use taggers'
 # names as experiment names.
 EXPERIMENT_PLACEHOLDER_NAME = "_______EXPERIMENT_PLACEHOLDER_NAME_______"
@@ -244,6 +246,9 @@ class TaggerProcessor(BaseParallelProcessor):
         queue: QueueType,
         **kwargs,
     ):
+        language = kwargs.get("language", "en")
+        tokenizer = kwargs.get("tokenizer", "xlm-roberta-base")
+
         """Lets count run the taggers! We will use the destination path to save each tagger output."""
         # import tagger modules
         taggers_modules = kwargs.get("taggers_modules", None)
@@ -256,7 +261,20 @@ class TaggerProcessor(BaseParallelProcessor):
             raise RuntimeError("Taggers not in kwargs, this is a bug! Please report it.")
         elif not isinstance(taggers_names, list) or not all(isinstance(t, str) for t in taggers_names):
             raise RuntimeError("Taggers are in the wrong format, this is a bug! Please report it.")
-        taggers = {make_variable_name(t): TaggerRegistry.get(t)() for t in taggers_names}
+
+        taggers = {}
+        for t in taggers_names:
+            tagger_cls = TaggerRegistry.get(t)
+            tagger_params = inspect.signature(tagger_cls.__init__).parameters
+
+            if "tokenizer" in tagger_params and "language" in tagger_params:
+                taggers[make_variable_name(t)] = tagger_cls(tokenizer=tokenizer, language=language)
+            elif "tokenizer" in tagger_params:
+                taggers[make_variable_name(t)] = tagger_cls(tokenizer=tokenizer)
+            elif "language" in tagger_params:
+                taggers[make_variable_name(t)] = tagger_cls(language=language)
+            else:
+                taggers[make_variable_name(t)] = tagger_cls()
 
         # get name of experiment
         if (experiment_name := kwargs.get("experiment_name", None)) is None:
@@ -392,6 +410,8 @@ def create_and_run_tagger(
     profile_steps: Optional[int] = None,
     profile_sort_key: str = "tottime",
     profile_lines: int = 100,
+    language: str = "en",
+    tokenizer: str = "xlm-roberta-base",
 ):
     """This function creates a tagger and runs it on a list of documents.
 
@@ -469,6 +489,10 @@ def create_and_run_tagger(
             ignore_existing=ignore_existing,
             retries_on_error=retries_on_error,
             num_processes=num_processes,
+            process_single_kwargs={
+                "language": language,
+                "tokenizer": tokenizer,
+            },
         )
 
         with ExitStack() as stack:
