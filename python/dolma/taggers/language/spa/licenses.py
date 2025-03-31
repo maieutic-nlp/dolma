@@ -10,9 +10,9 @@ from typing import List, Optional
 
 import regex
 
-from ..core.data_types import DocResult, DocumentWithMetadata, Span
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTaggerWithMetadata
+from python.dolma.core.data_types import DocResult, DocumentWithMetadata, Span
+from python.dolma.core.registry import TaggerRegistry
+from python.dolma.core.taggers import BaseTaggerWithMetadata
 
 
 @TaggerRegistry.add("cc_re")

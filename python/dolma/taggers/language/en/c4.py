@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Set
 
-from ..core.data_types import DocResult, Document, Span
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTagger
+from dolma.core.data_types import DocResult, Document, Span
+from dolma.core.registry import TaggerRegistry
+from dolma.core.taggers import BaseTagger
 
 MIN_WORDS_PER_LINE = 3
 EOL_PUNCTUATION = {".", "?", "!", '"'}

@@ -16,10 +16,10 @@ with necessary("presidio-analyzer", soft=True) as PRESIDIO_AVAILABLE:
     if PRESIDIO_AVAILABLE:
         from presidio_analyzer import AnalyzerEngine  # pylint: disable=import-error # pyright: ignore
 
-from ..core.data_types import DocResult, Document, Span, TextSlice
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTagger
-from ..core.utils import split_paragraphs
+from dolma.core.data_types import DocResult, Document, Span, TextSlice
+from dolma.core.registry import TaggerRegistry
+from dolma.core.taggers import BaseTagger
+from dolma.core.utils import split_paragraphs
 
 __all__ = ["PiiPresidioV1", "PiiRegexV1", "PiiRegexV2", "FastPiiRegex", "PiiRegexWithCountV2"]
 

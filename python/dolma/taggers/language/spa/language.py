@@ -10,11 +10,11 @@ import necessary
 import regex
 from anyascii import anyascii
 
-from ..core.data_types import DocResult, Document, Span
-from ..core.ft_tagger import BaseFastTextTagger
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTagger
-from ..core.utils import split_paragraphs
+from python.dolma.core.data_types import DocResult, Document, Span
+from python.dolma.core.ft_tagger import BaseFastTextTagger
+from python.dolma.core.registry import TaggerRegistry
+from python.dolma.core.taggers import BaseTagger
+from python.dolma.core.utils import split_paragraphs
 
 with necessary.necessary("cld3", soft=True) as CLD3_AVAILABLE:
     if CLD3_AVAILABLE or TYPE_CHECKING:

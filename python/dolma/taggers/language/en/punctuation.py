@@ -1,9 +1,9 @@
 import regex
 
-from ..core.data_types import DocResult, Document, Span
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTagger
-from ..core.utils import split_paragraphs
+from dolma.core.data_types import DocResult, Document, Span
+from dolma.core.registry import TaggerRegistry
+from dolma.core.taggers import BaseTagger
+from dolma.core.utils import split_paragraphs
 
 
 @TaggerRegistry.add("not_alphanum_paragraph_v1")

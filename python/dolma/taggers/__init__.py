@@ -1,4 +1,4 @@
-from . import (
+from .language.en import (
     c4,
     code,
     gopher,
@@ -14,3 +14,21 @@ from . import (
     tokenizers,
     url,
 )
+'''
+from .language.spa import (
+    c4,
+    code,
+    gopher,
+    jigsaw,
+    language,
+    length,
+    licenses,
+    pii,
+    punctuation,
+    quality,
+    repetitions,
+    sampling,
+    tokenizers,
+    url,
+)
+'''

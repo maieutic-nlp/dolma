@@ -10,9 +10,9 @@ from typing import Iterable, List, Tuple
 
 from tokenizers import normalizers, pre_tokenizers
 
-from ..core.data_types import TextSlice
-from ..core.ft_tagger import BaseFastTextTagger, Prediction
-from ..core.registry import TaggerRegistry
+from dolma.core.data_types import TextSlice
+from dolma.core.ft_tagger import BaseFastTextTagger, Prediction
+from dolma.core.registry import TaggerRegistry
 
 
 @TaggerRegistry.add("dclm-oh-eli5")

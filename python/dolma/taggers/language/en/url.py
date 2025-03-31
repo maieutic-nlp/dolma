@@ -6,12 +6,12 @@ from typing import Generator, List, Set
 import smart_open
 import urllib3.util
 
-from ..core.data_types import DocResult, DocumentWithMetadata, Span
-from ..core.loggers import get_logger
-from ..core.paths import cached_path
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTaggerWithMetadata
-from ..core.url_blocker import UrlBlocker
+from dolma.core.data_types import DocResult, DocumentWithMetadata, Span
+from dolma.core.loggers import get_logger
+from dolma.core.paths import cached_path
+from dolma.core.registry import TaggerRegistry
+from dolma.core.taggers import BaseTaggerWithMetadata
+from dolma.core.url_blocker import UrlBlocker
 
 LOGGER = get_logger(__name__)
 

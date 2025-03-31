@@ -8,9 +8,9 @@ Filters.
 
 from tokenizers import Tokenizer
 
-from ..core.data_types import DocResult, Document, Span
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTagger
+from dolma.core.data_types import DocResult, Document, Span
+from dolma.core.registry import TaggerRegistry
+from dolma.core.taggers import BaseTagger
 
 
 class BaseTokenizer(BaseTagger):

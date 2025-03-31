@@ -8,9 +8,9 @@ Filters.
 
 from typing import Iterable
 
-from ..core.data_types import TextSlice
-from ..core.ft_tagger import BaseFastTextTagger, Prediction
-from ..core.registry import TaggerRegistry
+from dolma.core.data_types import TextSlice
+from dolma.core.ft_tagger import BaseFastTextTagger, Prediction
+from dolma.core.registry import TaggerRegistry
 
 
 @TaggerRegistry.add("jigsaw_hatespeech_document_v2")

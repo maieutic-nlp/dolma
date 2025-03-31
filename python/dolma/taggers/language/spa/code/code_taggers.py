@@ -13,9 +13,9 @@ from typing import List
 import numpy as np
 from necessary import necessary
 
-from ...core.data_types import DocResult, Document, DocumentWithMetadata, Span
-from ...core.registry import TaggerRegistry
-from ...core.taggers import BaseTagger, BaseTaggerWithMetadata
+from python.dolma.core.data_types import DocResult, Document, DocumentWithMetadata, Span
+from python.dolma.core.registry import TaggerRegistry
+from python.dolma.core.taggers import BaseTagger, BaseTaggerWithMetadata
 
 with necessary(["detect_secrets", "bs4", "regex", "pygments"], soft=True) as CODE_DEPENDENCIES_AVAILABLE:
     if CODE_DEPENDENCIES_AVAILABLE:

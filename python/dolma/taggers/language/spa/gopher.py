@@ -6,9 +6,9 @@ from statistics import median
 from typing import Counter as CounterType
 from typing import List, Tuple, Union
 
-from ..core.data_types import DocResult, Document, Span
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTagger
+from python.dolma.core.data_types import DocResult, Document, Span
+from python.dolma.core.registry import TaggerRegistry
+from python.dolma.core.taggers import BaseTagger
 
 from tokenizers import Tokenizer
 

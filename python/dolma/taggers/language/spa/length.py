@@ -12,10 +12,10 @@ import regex
 import uniseg.wordbreak
 from tokenizers import Regex, Tokenizer, pre_tokenizers
 
-from ..core.data_types import DocResult, Document, Span, TextSlice
-from ..core.registry import TaggerRegistry
-from ..core.taggers import BaseTagger
-from ..core.utils import split_paragraphs
+from python.dolma.core.data_types import DocResult, Document, Span, TextSlice
+from python.dolma.core.registry import TaggerRegistry
+from python.dolma.core.taggers import BaseTagger
+from python.dolma.core.utils import split_paragraphs
 
 
 @TaggerRegistry.add("bytes_length_v1")
