@@ -1,6 +1,11 @@
+from .language.default import (
+    c4,
+    gopher,
+    code,
+)
+
 from .language.en import (
     c4,
-    code,
     gopher,
     jigsaw,
     language,
@@ -16,9 +21,6 @@ from .language.en import (
 )
 '''
 from .language.spa import (
-    c4,
-    code,
-    gopher,
     jigsaw,
     language,
     length,

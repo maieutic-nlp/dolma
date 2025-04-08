@@ -14,6 +14,7 @@ from dolma.core.registry import TaggerRegistry
 from dolma.core.runtime import create_and_run_tagger
 from dolma.core.utils import import_modules
 
+SUPPORTED_LANGUAGES = ["default", "agnostic", "en", "spa", "ara", "zho", "fra"]
 
 @dataclass
 class ProfilerConfig:
@@ -93,7 +94,7 @@ class TaggerConfig:
     )
     language: str = field(
         default="en",
-        choices=["en", "spa"],
+        choices=SUPPORTED_LANGUAGES,
         help="Language code for processing documents. Supported languages: 'en' (English), 'spa' (Spanish)."
     )
     tokenizer: Optional[str] = field(
@@ -134,6 +135,11 @@ class TaggerCli(BaseCli):
             if parsed_config.dryrun:
                 logger.info("Exiting due to dryrun.")
                 return
+            
+            if parsed_config.language not in SUPPORTED_LANGUAGES:
+                raise DolmaConfigError(
+                    f"'{parsed_config.language}' is not a supported language. Please choose from: {', '.join(SUPPORTED_LANGUAGES)}."
+                )
 
             create_and_run_tagger(
                 documents=documents,
