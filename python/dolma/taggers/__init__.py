@@ -2,6 +2,7 @@ from .language.default import (
     c4,
     gopher,
     code,
+    punctuation,
 )
 
 from .language.en import (
@@ -26,7 +27,6 @@ from .language.spa import (
     length,
     licenses,
     pii,
-    punctuation,
     quality,
     repetitions,
     sampling,
