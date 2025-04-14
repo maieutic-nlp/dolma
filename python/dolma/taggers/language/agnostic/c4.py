@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 def load_naughty_words(language: str) -> Set[str]:
     naughty_words_file = Path(__file__).parent / f"../../../data/naughty_words_{language}.txt"
-    if language in {"default", "agnostic"} or not naughty_words_file.exists():
-        if language not in {"default", "agnostic"}:
+    if language == "agnostic" or not naughty_words_file.exists():
+        if language != "agnostic":
             logger.warning(
                 f"No naughty words file found for language '{language}'. "
                 f"Falling back to default language-agnostic list."

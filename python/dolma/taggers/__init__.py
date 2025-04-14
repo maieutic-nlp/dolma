@@ -1,11 +1,10 @@
-from .language.default import (
+from .language.agnostic import (
     c4,
     gopher,
-    code,
     punctuation,
 )
 
-from .language.en import (
+from .language.eng import (
     c4,
     gopher,
     jigsaw,
@@ -20,17 +19,8 @@ from .language.en import (
     tokenizers,
     url,
 )
-'''
-from .language.spa import (
-    jigsaw,
-    language,
-    length,
-    licenses,
-    pii,
-    quality,
-    repetitions,
-    sampling,
-    tokenizers,
-    url,
+
+from .language.code import (
+    code_taggers,
+    starcoder,
 )
-'''
