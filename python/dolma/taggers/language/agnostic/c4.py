@@ -1,3 +1,4 @@
+import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -9,7 +10,43 @@ from dolma.core.taggers import BaseTagger
 
 logger = logging.getLogger(__name__)
 
-def load_naughty_words(language: str) -> Set[str]:
+# default values if not specified in language config
+DEFAULT_MIN_WORDS_PER_LINE = 3
+DEFAULT_EOL_PUNCTUATION = {".", "?", "!", '"'}
+
+# languages that don't use spaces to delimit words
+SPACELESS_LANGUAGES = {"zho"}
+
+# 
+def get_language_config(language: str) -> dict:
+    """
+    Load language-specific configuration from JSON file, including:
+    - min_words_per_line
+    - eol_punctuation (acceptable punctuation for line endings)
+
+    Falls back to 'en' or hardcoded defaults if missing.
+    """
+    config_file = Path(__file__).parent / f"../../../data/language_config.json"
+
+    try:
+        with config_file.open("r", encoding="utf-8") as f:
+            config_data = json.load(f)
+    except Exception:
+        logger.exception("Failed to load language config file.")
+        config_data = {}
+    
+    lang_config = config_data.get(language) or config_data.get("en") or {}
+
+    return {
+        "min_words_per_line": lang_config.get("min_words_per_line", DEFAULT_MIN_WORDS_PER_LINE),
+        "eol_punctuation": set(lang_config.get("eol_punctuation", DEFAULT_EOL_PUNCTUATION)),
+    }
+
+def load_naughty_words(language: str) -> tuple[Set[str], Set[str]]:
+    """
+    Load a list of "naughty" words and phrases to flag as sensitive content.
+    Tries to load a language-specific file; falls back to a language-agnostic version.
+    """
     naughty_words_file = Path(__file__).parent / f"../../../data/naughty_words_{language}.txt"
     if language == "agnostic" or not naughty_words_file.exists():
         if language != "agnostic":
@@ -27,6 +64,8 @@ def load_naughty_words(language: str) -> Set[str]:
 
 @dataclass
 class C4Attributes:
+    lines_with_no_ending_punctuation: List[Span]
+    lines_with_too_few_words: List[Span]
     has_naughty_word: bool = False
     has_javascript: bool = False
     has_lorem_ipsum: bool = False
@@ -36,6 +75,8 @@ class C4Attributes:
 
     def as_spans(self) -> List[Span]:
         spans = []
+        spans.extend(self.lines_with_no_ending_punctuation)
+        spans.extend(self.lines_with_too_few_words)
         if self.has_naughty_word:
             spans.append(Span(0, self.character_count, type="has_naughty_word"))
         if self.has_javascript:
@@ -51,30 +92,51 @@ class C4Attributes:
 class MC4Tagger(BaseTagger):
     def __init__(self, language: str = "en"):
         super().__init__()
+        self.language = language
         self.naughty_words, self.naughty_phrases = load_naughty_words(language)
+
+        config = get_language_config(language)
+        self.min_words_per_line = config["min_words_per_line"]
+        self.eol_punctuation = config["eol_punctuation"]
     
     def predict(self, doc: Document) -> DocResult:
         spans: List[Span] = []
         text = doc.text.lower()
-        lines = text.split("\n")
-        valid_line_count = sum(len(line) >= 200 for line in lines)
 
-        if valid_line_count < 3:
-            spans.append(Span(0, len(doc.text), type="filtered_by_line_length"))
+        if "{" in text:
+            spans.append(Span(0, len(doc.text), type="has_curly_brace"))
 
-        # if "{" in text:
-        #     spans.append(Span(0, len(doc.text), type="has_curly_brace"))
+        if "lorem ipsum" in text:
+            spans.append(Span(0, len(doc.text), type="has_lorem_ipsum"))
 
-        # if "lorem ipsum" in text:
-        #     spans.append(Span(0, len(doc.text), type="has_lorem_ipsum"))
-
-        # if "javascript" in text:
-        #     spans.append(Span(0, len(doc.text), type="has_javascript"))
+        if "javascript" in text:
+            spans.append(Span(0, len(doc.text), type="has_javascript"))
 
         if any(word in self.naughty_words for word in text.split()) or any(
             phrase in text for phrase in self.naughty_phrases
         ):
             spans.append(Span(0, len(doc.text), type="has_naughty_word"))
+        
+        start = count = 0
+        for sent in text.split("\n"):
+            end = start + len(sent)
+            if end != len(text):
+                # account for the newline
+                end += 1
 
-        spans.append(Span(0, len(doc.text), type="line_count", score=valid_line_count))
+            # strip any trailing whitespace
+            sent = sent.strip()
+
+            if not sent.endswith(tuple(self.eol_punctuation)):
+                spans.append(Span(start, end, type="lines_with_no_ending_punctuation"))
+            
+            # check word count if language uses spaces
+            if self.language not in SPACELESS_LANGUAGES:
+                if len(sent.split()) < self.min_words_per_line:
+                    spans.append(Span(start, end, type="lines_with_too_few_words"))
+
+            count += 1
+            start = end
+
+        spans.append(Span(0, len(doc.text), type="line_count", score=count))
         return DocResult(doc=doc, spans=spans)
