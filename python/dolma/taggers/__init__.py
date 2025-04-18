@@ -1,6 +1,7 @@
 from .language.agnostic import (
     c4,
     gopher,
+    language,
     punctuation,
 )
 

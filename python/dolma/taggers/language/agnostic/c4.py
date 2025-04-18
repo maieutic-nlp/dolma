@@ -1,4 +1,3 @@
-import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -7,40 +6,9 @@ from typing import List, Set
 from dolma.core.data_types import DocResult, Document, Span
 from dolma.core.registry import TaggerRegistry
 from dolma.core.taggers import BaseTagger
+from dolma.utils.language_config import get_language_config, get_spaceless_languages
 
 logger = logging.getLogger(__name__)
-
-# default values if not specified in language config
-DEFAULT_MIN_WORDS_PER_LINE = 3
-DEFAULT_EOL_PUNCTUATION = {".", "?", "!", '"'}
-
-# languages that don't use spaces to delimit words
-SPACELESS_LANGUAGES = {"zho"}
-
-# 
-def get_language_config(language: str) -> dict:
-    """
-    Load language-specific configuration from JSON file, including:
-    - min_words_per_line
-    - eol_punctuation (acceptable punctuation for line endings)
-
-    Falls back to 'en' or hardcoded defaults if missing.
-    """
-    config_file = Path(__file__).parent / f"../../../data/language_config.json"
-
-    try:
-        with config_file.open("r", encoding="utf-8") as f:
-            config_data = json.load(f)
-    except Exception:
-        logger.exception("Failed to load language config file.")
-        config_data = {}
-    
-    lang_config = config_data.get(language) or config_data.get("en") or {}
-
-    return {
-        "min_words_per_line": lang_config.get("min_words_per_line", DEFAULT_MIN_WORDS_PER_LINE),
-        "eol_punctuation": set(lang_config.get("eol_punctuation", DEFAULT_EOL_PUNCTUATION)),
-    }
 
 def load_naughty_words(language: str) -> tuple[Set[str], Set[str]]:
     """
@@ -131,7 +99,7 @@ class MC4Tagger(BaseTagger):
                 spans.append(Span(start, end, type="lines_with_no_ending_punctuation"))
             
             # check word count if language uses spaces
-            if self.language not in SPACELESS_LANGUAGES:
+            if self.language not in get_spaceless_languages():
                 if len(sent.split()) < self.min_words_per_line:
                     spans.append(Span(start, end, type="lines_with_too_few_words"))
 
