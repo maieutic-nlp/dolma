@@ -15,14 +15,14 @@ def load_naughty_words(language: str) -> tuple[Set[str], Set[str]]:
     Load a list of "naughty" words and phrases to flag as sensitive content.
     Tries to load a language-specific file; falls back to a language-agnostic version.
     """
-    naughty_words_file = Path(__file__).parent / f"../../../data/naughty_words_{language}.txt"
+    naughty_words_file = Path(__file__).parent / f"../../data/naughty_words_{language}.txt"
     if language == "agnostic" or not naughty_words_file.exists():
         if language != "agnostic":
             logger.warning(
                 f"No naughty words file found for language '{language}'. "
                 f"Falling back to default language-agnostic list."
             )
-        naughty_words_file = Path(__file__).parent / f"../../../data/naughty_words.txt"
+        naughty_words_file = Path(__file__).parent / f"../../data/naughty_words.txt"
     
     naughty_lines = naughty_words_file.absolute().open().read().splitlines()
     words = set(w for w in naughty_lines if " " not in w)

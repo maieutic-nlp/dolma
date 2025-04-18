@@ -8,7 +8,7 @@ from dolma.core.registry import TaggerRegistry
 from dolma.core.taggers import BaseTagger
 
 MIN_WORDS_PER_LINE = 3
-NAUGHTY_LINES = (Path(__file__).parent / "../../../data/naughty_words_en.txt").absolute().open().read().splitlines()
+NAUGHTY_LINES = (Path(__file__).parent / "../data/naughty_words_en.txt").absolute().open().read().splitlines()
 NAUGHTY_WORDS: Set[str] = set(w for w in NAUGHTY_LINES if " " not in w)
 NAUGHTY_PHRASES: Set[str] = set(w for w in NAUGHTY_LINES if " " in w)
 EOL_PUNCTUATION = {".", "?", "!", '"'}
