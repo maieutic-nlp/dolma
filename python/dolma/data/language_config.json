@@ -1,10 +1,27 @@
 {
     "en": {
       "min_words_per_line": 3,
-      "eol_punctuation": [".", "?", "!", "\""]
+      "eol_punctuation": [".", "?", "!", "\""],
+      "required_words" : ["the", "be", "to", "of", "and", "that", "have", "with"]
     },
     "spa": {
       "min_words_per_line": 3,
-      "eol_punctuation": [".", "?", "!", "\""]
+      "eol_punctuation": [".", "?", "!", "\""],
+      "required_words" : ["el", "la", "es", "a", "de", "del", "y", "que", "un", "una", "uno"]
+    },
+    "fra": {
+      "min_words_per_line": 3,
+      "eol_punctuation": [".", "?", "!", "\"", "»"],
+      "required_words" : ["le", "la", "les", "est", "à", "de", "du", "des", "et", "que", "qui", "a", "avec", "un", "une"]
+    },
+    "ara": {
+      "min_words_per_line": 3,
+      "eol_punctuation": [".", "؟", "!", "“", "”", "\""],
+      "required_words" : ["أن", "لا", "أو", "إلى", "ولا", "من", "مع", "لن", "يا", "لم"]
+    },
+    "zho": {
+      "min_words_per_line": 3,
+      "eol_punctuation": [".", "?", "!", "\"", "。", ",.", "？", "！", "\""],
+      "required_words" : ["/TODO"]
     }
   }

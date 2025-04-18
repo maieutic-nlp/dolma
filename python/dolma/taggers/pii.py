@@ -32,7 +32,8 @@ class BasePiiFilter(BaseTagger):
     PRESIDIO = "presidio"
     REGEX = "regex"
 
-    ENGLISH = "en"
+    #ENGLISH = "en"
+    LANGUAGES = ["en", "es", "de"] #These are the languages Presidio supports by default
     WINDOW = 100
 
     def __init__(
@@ -106,7 +107,7 @@ class BasePiiFilter(BaseTagger):
         analyzer_results = self.analyzer.analyze(
             text=text,
             entities=[self.EMAIL, self.PHONE, self.IP],
-            language=self.ENGLISH,
+            language=self.LANGUAGES,
         )
         pii_spans: List[Span] = []
         for res in analyzer_results:
