@@ -32,8 +32,8 @@ class BasePiiFilter(BaseTagger):
     PRESIDIO = "presidio"
     REGEX = "regex"
 
-    #ENGLISH = "en"
-    LANGUAGES = ["en", "es", "de"] #These are the languages Presidio supports by default
+    # ENGLISH = "en"
+    LANGUAGES = ["en", "es", "de"] # These are the languages Presidio supports by default.
     WINDOW = 100
 
     def __init__(
