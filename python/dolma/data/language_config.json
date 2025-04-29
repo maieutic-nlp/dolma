@@ -27,6 +27,6 @@
       "iso639_1": "zh",
       "min_words_per_line": 3,
       "eol_punctuation": [".", "?", "!", "\"", "。", ",.", "？", "！", "\""],
-      "required_words" : ["/TODO"]
+      "required_words" : ["的", "了", "是", "在", "有", "这"]
     }
   }
