@@ -22,7 +22,8 @@ from .agnostic import (
 
 from .code import (
     code_taggers,
-    starcoder,
 )
 
-# TODO repetitions
+from .repetitions import (
+    repetitions_taggers,
+)
