@@ -3,30 +3,35 @@
       "iso639_1": "en",
       "min_words_per_line": 3,
       "eol_punctuation": [".", "?", "!", "\""],
-      "required_words" : ["the", "be", "to", "of", "and", "that", "have", "with"]
+      "required_words" : ["the", "be", "to", "of", "and", "that", "have", "with"],
+      "alphanum_regex": "[a-zA-Z0-9]"
     },
     "spa": {
       "iso639_1": "es",
       "min_words_per_line": 3,
       "eol_punctuation": [".", "?", "!", "\""],
-      "required_words" : ["el", "la", "es", "a", "de", "del", "y", "que", "un", "una", "uno"]
+      "required_words" : ["el", "la", "es", "a", "de", "del", "y", "que", "un", "una", "uno"],
+      "alphanum_regex": "\\p{Latin}|\\d"
     },
     "fra": {
       "iso639_1": "fr",
       "min_words_per_line": 3,
       "eol_punctuation": [".", "?", "!", "\"", "»"],
-      "required_words" : ["le", "la", "les", "est", "à", "de", "du", "des", "et", "que", "qui", "a", "avec", "un", "une"]
+      "required_words" : ["le", "la", "les", "est", "à", "de", "du", "des", "et", "que", "qui", "a", "avec", "un", "une"],
+      "alphanum_regex": "\\p{Latin}|\\d"
     },
     "ara": {
       "iso639_1": "ar",
       "min_words_per_line": 3,
       "eol_punctuation": [".", "؟", "!", "“", "”", "\""],
-      "required_words" : ["أن", "لا", "أو", "إلى", "ولا", "من", "مع", "لن", "يا", "لم"]
+      "required_words" : ["أن", "لا", "أو", "إلى", "ولا", "من", "مع", "لن", "يا", "لم"],
+      "alphanum_regex": "\\p{Arabic}|\\d"
     },
     "zho": {
       "iso639_1": "zh",
       "min_words_per_line": 3,
       "eol_punctuation": [".", "?", "!", "\"", "。", ",.", "？", "！", "\""],
-      "required_words" : ["的", "了", "是", "在", "有", "这"]
+      "required_words" : ["的", "了", "是", "在", "有", "这"],
+      "alphanum_regex": "\\p{Han}|\\d"
     }
   }
