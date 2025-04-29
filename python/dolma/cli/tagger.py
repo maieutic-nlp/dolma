@@ -13,8 +13,9 @@ from dolma.core.paths import glob_path
 from dolma.core.registry import TaggerRegistry
 from dolma.core.runtime import create_and_run_tagger
 from dolma.core.utils import import_modules
+from dolma.utils.language_config import get_supported_languages
 
-SUPPORTED_LANGUAGES = ["agnostic", "en", "spa", "ara", "zho", "fra"]
+SUPPORTED_LANGUAGES = get_supported_languages()
 
 @dataclass
 class ProfilerConfig:

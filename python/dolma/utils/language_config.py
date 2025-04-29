@@ -44,6 +44,24 @@ def get_language_config(language: str) -> Dict:
     }
 
 
+def get_supported_languages() -> Set[str]:
+    """
+    Returns the set of supported languages, based on the keys in the language config file.
+    """
+    config_file = Path(__file__).parent / "../data/language_config.json"
+
+    try:
+        with config_file.open("r", encoding="utf-8") as f:
+            config_data = json.load(f)
+    except Exception:
+        logger.exception("Failed to load language config file.")
+        config_data = {}
+
+    supported = set(config_data.keys())
+    supported.add("agnostic")
+    return supported
+
+
 def get_spaceless_languages() -> Set[str]:
     """
     Returns the set of languages that do not use spaces to separate words (e.g. Chinese).
